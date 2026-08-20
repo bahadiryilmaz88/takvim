@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aylık Tarım Takvimi — Tam Sürüm</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="hero">
+  <div class="hero-eyebrow">Yıllık Üretim Rehberi · Türkiye Geneli</div>
+  <h1>Aylık <em>Tarım Takvimi</em> — Tam Sürüm</h1>
+  <p class="hero-alt">39 üründe ay ay <span class="chip chip-etken">etken madde</span> · <span class="chip chip-gubre">gübre</span> vurgusu, <b>muhtemel hastalık/zararlı</b> uyarısı ve <b>toplam mevsimlik su + kurak yıl</b> bilgisi ve <b>BBCH fenolojik dönem</b> kodu. Hastalığa <b>tıklayınca</b> etken madde ve kültürel önlemler açılır. Tarla, bağ, bahçe ve tıbbi-aromatik bitkiler.</p>
+  <div class="lejant">
+    <span><i style="background:var(--toprak)"></i>Toprak/Ekim</span>
+    <span><i style="background:var(--gubre)"></i>Gübre</span>
+    <span><i style="background:var(--ilac)"></i>Hastalık/İlaç</span>
+    <span><i style="background:var(--su)"></i>Su</span>
+    <span><i style="background:var(--bakim)"></i>Bakım/Aşı</span>
+    <span><i style="background:var(--hasat)"></i>Hasat</span>
+    <span><i class="cetak cetak-etken">etken madde</i></span>
+    <span><i class="cetak cetak-gubre">gübre</i></span>
+    <span><i class="cetak cetak-hst">⚠ muhtemel hastalık</i></span>
+    <span><i class="cetak cetak-bbch">BBCH fenolojik dönem</i></span>
+    <span><i class="cetak cetak-gb">◈ aylık gübre dozu</i></span>
+  </div>
+</header>
+
+<div class="sekmeler">
+  <button class="sekme aktif" id="sekmeTablo">▦ Tablo Görünümü</button>
+  <button class="sekme" id="sekmeAy">▤ Ay Görünümü</button>
+  <button class="sekme" id="sekmeGdd">🌡 GDD & Zamanlama</button>
+  <button class="sekme" id="sekmeAsama">📋 Aşama Tablosu</button>
+</div>
+
+<div class="kontrol">
+  <div class="kontrol-ic">
+    <div class="kontrol-satir">
+      <input class="arama" id="arama" type="search" placeholder="Ürün ara… (arpa, elma, lavanta, mısır…)" aria-label="Ürün ara">
+      <button class="kontrol-btn" onclick="window.print()">🖨 Yazdır / PDF</button>
+      <span class="ipucu" id="ipucu">Tabloyu yana kaydırın →</span>
+    </div>
+    <div class="mobil-ipucu" id="mobilIpucu">Bir ürüne dokununca ayları açılır ▾</div>
+    <div class="kontrol-satir">
+      <span class="etiket-kucuk">Grup:</span>
+      <button class="filtre-grup aktif" data-grup="__hepsi" style="--g:var(--murekkep)"><span class="nokta"></span>Hepsi</button>
+      
+    </div>
+    <div class="kontrol-satir">
+      <span class="etiket-kucuk">Göster:</span>
+      
+    </div>
+  </div>
+</div>
+
+<!-- TABLO -->
+<div id="gorunum-tablo">
+  <div class="tablo-sar">
+    <table>
+      <thead><tr><th class="kose-hd">Ürün \ Ay</th></tr></thead>
+      <tbody id="govde"></tbody>
+    </table>
+  </div>
+  <div class="bos-uyari" id="bosUyari">Bu filtreye uygun ürün bulunamadı.</div>
+</div>
+
+<!-- AY -->
+<div id="gorunum-ay">
+  <div class="ay-sec-serit"></div>
+  
+</div>
+
+<!-- GDD -->
+<div id="gorunum-gdd"></div>
+
+<!-- AŞAMA TABLOSU -->
+<div id="gorunum-asama"></div>
+
+<!-- HASTALIK DETAY PENCERESİ -->
+<div class="hd-ortu" id="hdOrtu" hidden>
+  <div class="hd-pencere" role="dialog" aria-modal="true" aria-labelledby="hdAd">
+    <button class="hd-kapat" id="hdKapat" aria-label="Kapat">×</button>
+    <header class="hd-bas">
+      <span class="hd-baglam" id="hdBaglam" hidden></span>
+      <span class="hd-tur" id="hdTur"></span>
+      <h3 id="hdAd"></h3>
+      <p class="hd-bilimsel" id="hdBilimsel"></p>
+    </header>
+    <div class="hd-govde">
+      <p class="hd-ozel-uyari" id="hdOzelUyari" hidden></p>
+      <section class="hd-blok">
+        <h4>Belirtiler</h4>
+        <p id="hdBelirti"></p>
+      </section>
+      <section class="hd-blok">
+        <h4>Ne zaman müdahale</h4>
+        <p id="hdZaman"></p>
+      </section>
+      <section class="hd-blok hd-etken">
+        <h4>⊗ Etken maddeler</h4>
+        <div class="hd-etken-liste" id="hdEtken"></div>
+        <p class="hd-etken-uyari">Bunlar yalnızca <b>etken madde grubudur</b>, ticari ad ve doz değildir. Uygulamadan önce ürün-zararlı için <b>ruhsatlı</b> olduğunu BKÜ veri tabanından doğrulayın; etiket dozuna ve <b>son ilaçlama–hasat aralığına (PHI)</b> uyun.</p>
+      </section>
+      <section class="hd-blok hd-kulturel">
+        <h4>✿ Kültürel önlemler <em>(öncelikli)</em></h4>
+        <ul id="hdKulturel"></ul>
+      </section>
+    </div>
+  </div>
+</div>
+
+<section class="notlar">
+  <div class="notlar-ic">
+    <h3>Kullanım Notları ve Öneriler</h3>
+    <p>Bu takvim <strong>Türkiye geneli</strong> başvuru çerçevesidir; iklim yelpazesi nedeniyle aylar <strong>±3-4 hafta</strong> kayabilir. <span class="chip chip-etken">Kırmızı</span> rozetler etken maddeleri, <span class="chip chip-gubre">yeşil</span> rozetler gübre/besinleri, <span style="background:var(--hst-bg);border:1px solid var(--hst-bd);color:var(--hst-tx);border-radius:4px;padding:0 5px;font-size:0.9em;font-weight:700">⚠ sarı</span> kutular o ay muhtemel hastalık/zararlıları gösterir.</p>
+    <div class="uyari-kutu">
+      <strong>İlaçlama uyarısı:</strong> Yalnızca <strong>etken madde grubu ve hedef</strong> verilmiştir; ticari ad/doz yoktur. Uygulamadan önce <strong>ruhsatlı ilaçları (Tarım ve Orman Bakanlığı BKÜ veri tabanı / ZMTT)</strong> kontrol edin, etikete ve <strong>son ilaçlama–hasat aralığına (PHI)</strong> uyun, direnç için FRAC/IRAC gruplarını dönüşümlü kullanın.
+    </div>
+    <div class="uyari-kutu" style="background:color-mix(in srgb,var(--su) 8%,#fff);border-color:color-mix(in srgb,var(--su) 30%,#fff)">
+      <strong style="color:var(--su)">Su ihtiyacı hakkında:</strong> Verilen <strong>mm (= m³/da)</strong> değerleri mevsimlik toplam bitki su tüketimidir (FAO-56 mantığı, genel aralık). Gerçek sulama miktarı = bitki su tüketimi − etkili yağış. "Kurak yıl" notu, yağışın yetersiz kaldığı yıllarda kritik dönemde verilmesi gereken <strong>tamamlayıcı sulamayı</strong> özetler. Kesin program için bölgesel <strong>ET₀</strong> ve toprak nem takibi esastır.
+    </div>
+    <h4>Öne çıkan öneriler</h4>
+    <ul>
+      <li><strong>Kritik dönem sulaması:</strong> Sınırlı suyu her ürünün su kutusundaki "kritik dönem"e yönlendirin; o dönemdeki stres telafi edilmez.</li>
+      <li><strong>Rotasyon:</strong> Ayçiçeği, nohut, fasulye, pancar, patates, kimyon/çörekotu gibi solgunluğa hassas türlerde 3-4 yıl üst üste ekimden kaçının.</li>
+      <li><strong>Tıbbi-aromatiklerde su stresi:</strong> Lavanta, kekik, adaçayı gibi türlerde ölçülü su stresi <strong>uçucu yağ oranını artırır</strong>; nane, fesleğen, melisa ise bol su ister.</li>
+      <li><strong>Koruyucu > tedavi:</strong> Mildiyö, karaleke, monilya, Cercospora, nane pası, fesleğen mildiyösünde hastalık çıkmadan program kurun.</li>
+      <li><strong>İzleme:</strong> Feromon/sarı yapışkan tuzak + tarla gezisiyle eşiğe göre ilaçlama; masraf ve kalıntı azalır.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>Yıllık Tarım Takvimi · 39 ürün · Tarla, bağ, bahçe + tıbbi-aromatik · Etken madde/gübre vurgulu, su ihtiyacı ve hastalık uyarılı · Toprak analizi ve ruhsatlı ürün esastır.</footer>
+
+<!-- VERİ DOSYALARI -->
+<script src="veri.js"></script>
+<script src="tibbi_verisi.js"></script>
+<script src="su_verisi.js"></script>
+<script src="bbch_verisi.js"></script>
+<script src="gdd_verisi.js"></script>
+<script src="gubre_program.js"></script>
+<script src="hastalik_db.js"></script>
+<script src="asama_tablo.js"></script>
+
+<!-- UYGULAMA -->
+<script src="app.js"></script>
+</body>
+</html>
